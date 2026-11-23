@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Close Shift — Bojongloa</title>
+<meta name="theme-color" content="#1E5FC7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231E5FC7'/%3E%3Cpath d='M9 9h14v16H9z M12 14h8 M12 18h8 M12 22h5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --blue:#1E5FC7; --blue-d:#1545A3; --blue-50:#EEF3FC; --blue-100:#D6E2F8;
+    --ink:#18181B; --ink-2:#52525B; --ink-3:#8A8A93;
+    --line:#E7E7EA; --bg:#F5F5F6; --card:#fff; --soft:#FAFAFA;
+    --ok:#146C2E; --ok-bg:#E7F6EC; --bad:#B42318; --bad-bg:#FEECEB;
+    --r:14px; --r-s:10px; --sh:0 1px 2px rgba(24,24,27,.06),0 2px 10px rgba(24,24,27,.04);
+    --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;min-height:100vh}
+  :focus-visible{outline:3px solid rgba(30,95,199,.35);outline-offset:2px}
+  .hidden{display:none!important}
+
+  .top{background:var(--blue);color:#fff;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 16px}
+  .top-in{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px}
+  .logo{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center}
+  .logo svg{width:24px;height:24px}
+  .brand h1{font-size:19px;font-weight:800}
+  .brand p{font-size:13px;opacity:.92;margin-top:2px}
+
+  .tabs{position:sticky;top:0;z-index:6;background:var(--bg);padding:10px 14px 4px}
+  .tabs-in{max-width:900px;margin:0 auto;display:flex;background:#E9E9EC;border-radius:12px;padding:4px;gap:4px}
+  .tabs button{flex:1;border:none;background:transparent;border-radius:9px;padding:11px 8px;font-size:14px;font-weight:700;color:var(--ink-2);cursor:pointer;min-height:44px;font-family:inherit}
+  .tabs button.aktif{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+  .layout{max-width:900px;margin:0 auto;padding:12px 14px 120px}
+  .view{display:none}.view.aktif{display:block}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin-bottom:14px}
+  .card-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .card-h .no{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:800;display:grid;place-items:center}
+  .card-h h2{font-size:16px;font-weight:800}
+
+  label.lb{display:block;font-size:12px;font-weight:700;color:var(--ink-2);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+  label.lb:first-of-type{margin-top:8px}
+  input[type=text],input[type=number],input[type=date],input[type=email],input[type=tel],select{width:100%;min-height:50px;padding:12px 14px;border:1.5px solid #D4D4D9;border-radius:var(--r-s);font-size:16px;color:var(--ink);background:#fff;font-family:inherit}
+  input:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(30,95,199,.12)}
+  select{appearance:none;-webkit-appearance:none;padding-right:42px;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231E5FC7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center}
+  input:read-only{background-color:var(--soft);color:var(--ink-2)}
+  select.pilih{border-color:var(--blue);border-width:2px;font-weight:600;background-color:var(--blue-50)}
+  select.pilih.terisi{background-color:#fff}
+  .petunjuk{display:flex;gap:8px;align-items:flex-start;background:var(--blue-50);color:var(--blue-d);border-radius:var(--r-s);padding:10px 12px;font-size:13px;font-weight:600;margin:6px 0 4px}
+  textarea{width:100%;min-height:70px;padding:12px 14px;border:1.5px solid #D4D4D9;border-radius:var(--r-s);font-size:16px;color:var(--ink);background:#fff;resize:vertical;font-family:inherit}
+  textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(30,95,199,.12)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hint{font-size:11px;color:var(--ink-3);display:block;margin:4px 0 0}
+  .calc{font-weight:800}
+  .calc.plus{color:var(--ok)} .calc.minus{color:var(--bad)}
+
+  .up-box{display:block;border:2px dashed #D4D4D9;border-radius:var(--r-s);padding:18px 14px;text-align:center;cursor:pointer;margin-top:6px;background:var(--soft)}
+  .up-box:hover{border-color:var(--blue);background:var(--blue-50)}
+  .up-t{font-weight:600;font-size:14px}.up-s{font-size:12px;color:var(--ink-3);margin-top:3px}
+  .preview{max-width:100%;max-height:200px;border-radius:var(--r-s);margin-top:10px;display:none;border:1px solid var(--line)}
+  .fname{font-size:12px;color:var(--ok);margin:6px 0;font-weight:600;display:none}
+
+  .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:14px;min-height:52px;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:var(--r-s);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(30,95,199,.28);font-family:inherit}
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.6;cursor:not-allowed;box-shadow:none}
+  .btn.sibuk::before{content:"";width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;animation:putar .7s linear infinite}
+  @keyframes putar{to{transform:rotate(360deg)}}
+
+  .alert{position:sticky;top:64px;z-index:5;padding:12px 14px;border-radius:var(--r-s);margin-bottom:12px;font-size:14px;font-weight:600;display:none;box-shadow:var(--sh)}
+  .alert-err{background:var(--bad-bg);color:var(--bad);border:1px solid #FECACA;display:block}
+  .alert-ok{background:var(--ok-bg);color:var(--ok);border:1px solid #BBF7D0;display:block}
+
+  .info-kecil{font-size:12px;color:var(--ink-3);text-align:center;margin-top:18px;line-height:1.6}
+  .status-data{font-size:12px;color:var(--ink-3);margin:2px 2px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .status-data button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--blue);cursor:pointer;font-family:inherit}
+  .hari-ini{display:flex;gap:10px;align-items:center;border-radius:var(--r);padding:12px 14px;margin-bottom:14px;font-size:14px;font-weight:700}
+  .hari-ini.sudah{background:var(--ok-bg);color:var(--ok);border:1px solid #BBF7D0}
+  .hari-ini.belum{background:#FFF4E5;color:#9A5B00;border:1px solid #FFD8A8}
+  .hari-ini.muat{background:var(--soft);color:var(--ink-2);border:1px solid var(--line)}
+  .hari-ini small{display:block;font-weight:500;font-size:12px;margin-top:2px}
+  .rw{border:1px solid var(--line);border-radius:var(--r-s);padding:12px;margin-top:10px;background:#fff}
+  .rw-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .rw-tgl{font-weight:800;font-size:14px}
+  .rw-id{font-size:11px;color:var(--ink-3)}
+  .rw-baris{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-top:6px;color:var(--ink-2)}
+  .rw-baris b{color:var(--ink);text-align:right}
+  .badge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;white-space:nowrap}
+  .badge.ok{background:var(--ok-bg);color:var(--ok)}
+  .badge.wait{background:#FFF4E5;color:#9A5B00}
+  .rw-kosong{font-size:13px;color:var(--ink-3);text-align:center;padding:16px 0}
+  .rw-filter{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+  .rw-filter select{min-height:44px;font-size:14px}
+  .rw-ringkas{font-size:12px;color:var(--ink-2);margin:0 0 4px;font-weight:600}
+  .total-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+  .total-strip.t3{grid-template-columns:repeat(3,1fr)}
+  .total-item{background:var(--soft);border:1px solid var(--line);border-radius:var(--r-s);padding:8px 6px;text-align:center}
+  .total-strip:not(.t3) .total-item{text-align:left;padding:8px 10px}
+  .total-item .lbl{font-size:9.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.3px;line-height:1.3}
+  .total-strip:not(.t3) .total-item .lbl{font-size:10px}
+  .total-item .val{font-size:13.5px;font-weight:800;margin-top:3px}
+  .total-strip:not(.t3) .total-item .val{font-size:15px}
+  .total-item.plus .val{color:var(--ok)} .total-item.minus .val{color:var(--bad)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-in">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
+    </div>
+    <div class="brand">
+      <h1>Bojongloa</h1>
+      <p>Close Shift & Setor Omset · Rancaekek</p>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tabs-in">
+    <button class="aktif" id="tab1" onclick="switchTab('close')">① Close Shift</button>
+    <button id="tab2" onclick="switchTab('setor')">② Setor Omset</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div id="alertBox" class="alert" role="status"></div>
+  <div class="status-data"><span id="statusData">Memuat data pusat…</span><button type="button" onclick="muatDataPusat()">↻ Muat ulang</button></div>
+
+  <!-- VIEW CLOSE SHIFT -->
+  <div class="view aktif" id="vClose">
+    <div class="hari-ini muat" id="bannerHariIni">Memeriksa status close shift hari ini…</div>
+    <div class="card">
+      <div class="card-h"><div class="no">1</div><h2>Data Petugas</h2></div>
+      <div class="petunjuk">👆 Langkah pertama: ketuk kotak di bawah, lalu pilih nama Anda.</div>
+      <label class="lb">Pilih Petugas</label>
+      <select id="selNamaCS" class="pilih" onchange="isiOtomatis(this,'emailCS','hpCS')"><option value="">▼ Ketuk di sini, pilih nama Anda</option></select>
+      <div class="grid2">
+        <div><label class="lb">Email</label><input type="email" id="emailCS" readonly></div>
+        <div><label class="lb">No HP / WA</label><input type="tel" id="hpCS" readonly></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="no">2</div><h2>Close Shift</h2></div>
+      <label class="lb">Tanggal Transaksi</label>
+      <input type="date" id="tglCS">
+      <div class="grid2">
+        <div><label class="lb">Kabupaten/Kota</label><input type="text" value="Bandung" readonly></div>
+        <div><label class="lb">Kecamatan</label><input type="text" value="Rancaekek" readonly></div>
+      </div>
+      <label class="lb">KDKMP</label>
+      <input type="text" value="Koperasi Desa Bojongloa" readonly>
+      <label class="lb">Omset Close Shift (Rp)</label>
+      <input type="number" id="omsetCS" placeholder="0" min="0" inputmode="numeric" oninput="hitungCS()">
+      <label class="lb" style="color:var(--blue)">Transaksi Non Tunai (Rp)</label>
+      <input type="number" id="nonTunaiCS" placeholder="0" min="0" value="0" inputmode="numeric" oninput="hitungCS()">
+      <label class="lb">Omset Harian Masuk Sheet (Rp)</label>
+      <input type="text" id="bersihCS" readonly value="Rp 0">
+      <small class="hint">= Omset Close Shift − Non Tunai (sama seperti aplikasi pusat)</small>
+      <label class="lb">Foto Bukti Close Shift</label>
+      <label for="fotoCS" class="up-box"><div class="up-t">📸 Klik untuk ambil/pilih foto</div><div class="up-s">JPG, PNG, WEBP · Maks 5 MB</div></label>
+      <input type="file" id="fotoCS" accept="image/*" class="hidden" onchange="previewImg(this,'prevCS','fnCS','cs')">
+      <div class="fname" id="fnCS"></div>
+      <img class="preview" id="prevCS" alt="Pratinjau bukti close shift">
+      <label class="lb">Catatan (opsional)</label>
+      <textarea id="catatanCS" placeholder="Keterangan shift atau kendala..."></textarea>
+    </div>
+    <button class="btn" id="btnCS" onclick="submitClose()">✅ Simpan Close Shift</button>
+    <div class="info-kecil">Data masuk ke Sheet pusat · terbaca juga di aplikasi pusat</div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="card-h"><div class="no">3</div><h2>Riwayat Close Shift</h2></div>
+      <small class="hint" style="margin:0 0 10px">Termasuk yang diinput lewat aplikasi pusat</small>
+      <div class="rw-filter">
+        <select id="filterBulanRiwayat" onchange="renderRiwayat(false)" style="flex:1">
+          <option value="SEMUA">Semua Bulan</option>
+        </select>
+      </div>
+      <div class="total-strip" id="totalRiwayat" style="display:none"></div>
+      <div class="rw-ringkas" id="ringkasRiwayat"></div>
+      <div id="riwayatCS"><div class="rw-kosong">Memuat…</div></div>
+    </div>
+  </div>
+
+  <!-- VIEW SETOR OMSET -->
+  <div class="view" id="vSetor">
+    <div class="card">
+      <div class="card-h"><div class="no">1</div><h2>Data Penyetor</h2></div>
+      <div class="petunjuk">👆 Langkah pertama: ketuk kotak di bawah, lalu pilih nama Anda.</div>
+      <label class="lb">Pilih Penyetor</label>
+      <select id="selNamaSO" class="pilih" onchange="isiOtomatis(this,'emailSO','hpSO')"><option value="">▼ Ketuk di sini, pilih nama Anda</option></select>
+      <div class="grid2">
+        <div><label class="lb">Email</label><input type="email" id="emailSO" readonly></div>
+        <div><label class="lb">No HP / WA</label><input type="tel" id="hpSO" readonly></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="no">2</div><h2>Setor Omset</h2></div>
+      <label class="lb">Pilih Close Shift (belum disetor)</label>
+      <select id="selShiftSO" onchange="isiDariCloseShift()">
+        <option value="">-- Memuat... --</option>
+      </select>
+      <small class="hint">Hanya Close Shift Bojongloa yang belum disetor (dari aplikasi ini maupun aplikasi pusat)</small>
+      <label class="lb">Tanggal Transaksi</label>
+      <input type="date" id="tglSO" readonly>
+      <div class="grid2">
+        <div><label class="lb">Kabupaten/Kota</label><input type="text" value="Bandung" readonly></div>
+        <div><label class="lb">Kecamatan</label><input type="text" value="Rancaekek" readonly></div>
+      </div>
+      <label class="lb">KDKMP</label>
+      <input type="text" value="Koperasi Desa Bojongloa" readonly>
+      <label class="lb">Omset Close Shift / Harian (Rp)</label>
+      <input type="number" id="omsetShiftSO" placeholder="Sesuai close shift" readonly>
+      <label class="lb" style="color:var(--blue)">Non Tunai (Rp)</label>
+      <input type="number" id="nonTunaiSO" placeholder="0" min="0" value="0" inputmode="numeric">
+      <label class="lb">Nominal Transfer ke Kantor (Rp)</label>
+      <input type="number" id="nominalSO" placeholder="Jumlah yang ditransfer" min="0" inputmode="numeric" oninput="hitungSelisih()">
+      <label class="lb">Selisih Setoran (Rp)</label>
+      <input type="text" id="selisihSO" class="calc" readonly value="Rp 0">
+      <label class="lb">Foto Bukti Transfer</label>
+      <label for="fotoSO" class="up-box"><div class="up-t">📸 Klik untuk ambil/pilih bukti transfer</div><div class="up-s">Struk / mutasi rekening · JPG, PNG, WEBP</div></label>
+      <input type="file" id="fotoSO" accept="image/*" class="hidden" onchange="previewImg(this,'prevSO','fnSO','so')">
+      <div class="fname" id="fnSO"></div>
+      <img class="preview" id="prevSO" alt="Pratinjau bukti transfer">
+      <label class="lb">Catatan (opsional)</label>
+      <textarea id="catatanSO" placeholder="Contoh: Setor via BRI / Mandiri, no. referensi..."></textarea>
+    </div>
+    <button class="btn" id="btnSO" onclick="submitSetor()">✅ Simpan Setor Omset</button>
+    <div class="info-kecil">Data masuk ke Sheet pusat · terbaca juga di aplikasi pusat</div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="card-h"><div class="no">3</div><h2>Riwayat Setor Omset</h2></div>
+      <small class="hint" style="margin:0 0 10px">Termasuk yang diinput lewat aplikasi pusat</small>
+      <div class="rw-filter">
+        <select id="filterBulanRiwayatSO" onchange="renderRiwayatSO(false)" style="flex:1">
+          <option value="SEMUA">Semua Bulan</option>
+        </select>
+      </div>
+      <div class="total-strip" id="totalRiwayatSO" style="display:none"></div>
+      <div class="rw-ringkas" id="ringkasRiwayatSO"></div>
+      <div id="riwayatSO"><div class="rw-kosong">Memuat…</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==== KONFIGURASI (ganti sesuai tim Bojongloa) ====
+var KDKMP     = 'Koperasi Desa Bojongloa';
+var KABUPATEN = 'Bandung';
+var KECAMATAN = 'Rancaekek';
+var PETUGAS = [
+  {nama:"Fikhri Hilmi Rozika", email:"fikhrihilmir633@gmail.com", noHp:"083100589541"},
+  {nama:"Fuad Muhamad Tadjul Arifin", email:"fuadarifin627@gmail.com", noHp:"081227925116"},
+  {nama:"Mela Karmila", email:"mellakarmila1992@gmail.com", noHp:"089524989767"},
+  {nama:"Muksal Mina", email:"muksalminatg@gmail.com", noHp:"089656024845"},
+  {nama:"Marsya Futri Nabila", email:"marsyafutrinabila@gmail.com", noHp:"089525538845"}
+];
+var MAKS_FOTO = 5 * 1024 * 1024;
+
+// Endpoint SAMA dengan aplikasi pusat -> data masuk ke Sheet yang sama
+var API = 'https://script.google.com/macros/s/AKfycbyBs-njA5p7SukhDamHQ3hCg4-N4BqGFiY5T5-HfSKm2Xz3sQvDL9Yg7mZUhBsQb2B_/exec';
+
+var csFoto = null, soFoto = null;      // data URL lengkap (sama seperti aplikasi pusat)
+var dataCS = [], dataSO = [];          // seluruh data pusat milik KDKMP ini
+var sedangKirim = false;
+
+// ---------- helper ----------
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function rp(n){ return 'Rp ' + Number(n||0).toLocaleString('id-ID'); }
+function kunciKdkmp(s){ return String(s||'').trim().replace(/\s+/g,' ').toLowerCase(); }
+var KUNCI_INI = kunciKdkmp(KDKMP);
+function hariIni(){ // tanggal lokal (bukan UTC)
+  var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function normTgl(v){
+  if(!v) return '';
+  var s=String(v).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  var m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(m) return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  var d=new Date(s);
+  if(!isNaN(d.getTime())) return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return '';
+}
+var NAMA_BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function labelBulan(ym){ var p=ym.split('-'); return NAMA_BULAN[parseInt(p[1],10)-1]+' '+p[0]; }
+function alertBox(msg,type){
+  var el=document.getElementById('alertBox');
+  el.textContent=msg; el.className='alert alert-'+(type==='ok'?'ok':'err');
+  clearTimeout(alertBox._t); alertBox._t=setTimeout(function(){el.className='alert';},8000);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function panggilAPI(payload){
+  var r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  return await r.json();
+}
+
+// ---------- init ----------
+(function(){
+  var opts=PETUGAS.map(function(p,i){return '<option value="'+i+'">'+esc(p.nama)+'</option>';}).join('');
+  document.getElementById('selNamaCS').innerHTML+=opts;
+  document.getElementById('selNamaSO').innerHTML+=opts;
+  document.getElementById('tglCS').value=hariIni();
+})();
+
+function isiOtomatis(sel,emailId,hpId){
+  sel.classList.toggle('terisi',sel.value!=='');
+  var p=sel.value===''?null:PETUGAS[parseInt(sel.value)];
+  document.getElementById(emailId).value=p?p.email:'';
+  document.getElementById(hpId).value=p?p.noHp:'';
+}
+function switchTab(t){
+  document.getElementById('vClose').classList.toggle('aktif',t==='close');
+  document.getElementById('vSetor').classList.toggle('aktif',t==='setor');
+  document.getElementById('tab1').classList.toggle('aktif',t==='close');
+  document.getElementById('tab2').classList.toggle('aktif',t==='setor');
+  window.scrollTo({top:0});
+}
+
+// ---------- foto ----------
+function previewImg(input,prevId,nameId,jenis){
+  var file=input.files[0];
+  if(!file) return;
+  if(file.size>MAKS_FOTO){ input.value=''; alertBox('Foto terlalu besar ('+(file.size/1048576).toFixed(1)+' MB). Maksimal 5 MB.','err'); return; }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    if(jenis==='cs') csFoto=e.target.result; else soFoto=e.target.result;
+    var fn=document.getElementById(nameId);
+    fn.textContent='✅ '+file.name+' ('+(file.size/1024).toFixed(0)+' KB)'; fn.style.display='block';
+    var prev=document.getElementById(prevId); prev.src=e.target.result; prev.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+function resetFoto(jenis){
+  var ids=jenis==='cs'?['fotoCS','prevCS','fnCS']:['fotoSO','prevSO','fnSO'];
+  document.getElementById(ids[0]).value='';
+  document.getElementById(ids[1]).style.display='none';
+  document.getElementById(ids[2]).style.display='none';
+  if(jenis==='cs') csFoto=null; else soFoto=null;
+}
+
+// ---------- DATA PUSAT (dibaca dari Sheet yang sama dengan aplikasi pusat) ----------
+function muatDataPusat(pilihIdShift){
+  var st=document.getElementById('statusData');
+  st.textContent='Memuat data pusat…';
+  var sel=document.getElementById('selShiftSO');
+  sel.innerHTML='<option value="">-- Memuat... --</option>';
+  // getInitData sama persis dengan yang dipakai aplikasi pusat; hanya BACA data
+  return panggilAPI({action:'getInitData',user:{nama:'Bojongloa',email:'',noHp:'',role:'Sales',namaKdkmp:KDKMP}})
+    .then(function(res){
+      if(!res||res.status!=='success') throw new Error((res&&res.message)||'respons tidak valid');
+      dataCS=(res.closeShift||[]).filter(function(x){return kunciKdkmp(x.namaKdkmp)===KUNCI_INI;});
+      dataSO=(res.setorOmset||[]).filter(function(x){return kunciKdkmp(x.namaKdkmp)===KUNCI_INI;});
+      st.textContent='Data pusat termuat: '+dataCS.length+' close shift · '+dataSO.length+' setoran · '+new Date().toLocaleTimeString('id-ID');
+      isiDaftarShift(pilihIdShift);
+      renderRiwayat(false);
+      renderRiwayatSO(false);
+      return true;
+    })
+    .catch(function(e){
+      dataCS=[]; dataSO=[];
+      st.textContent='⚠ Gagal memuat data pusat: '+e.message+' — cek koneksi lalu "Muat ulang".';
+      sel.innerHTML='<option value="">-- Gagal memuat --</option>';
+      renderRiwayat(true);
+      renderRiwayatSO(true);
+      return false;
+    });
+}
+muatDataPusat();
+
+function renderRiwayat(gagal){
+  var box=document.getElementById('riwayatCS'), ban=document.getElementById('bannerHariIni');
+  var selBulan=document.getElementById('filterBulanRiwayat');
+  if(gagal){
+    box.innerHTML='<div class="rw-kosong">Riwayat belum bisa dimuat.</div>';
+    document.getElementById('ringkasRiwayat').textContent='';
+    ban.className='hari-ini muat'; ban.textContent='Status hari ini belum bisa diperiksa.'; return;
+  }
+  var setorPer={};
+  dataSO.forEach(function(x){ setorPer[String(x.idShift).trim()]=x; });
+  var urut=dataCS.slice().sort(function(a,b){
+    var ta=normTgl(a.tanggalTransaksi), tb=normTgl(b.tanggalTransaksi);
+    return ta<tb?1:ta>tb?-1:String(b.idShift).localeCompare(String(a.idShift));
+  });
+  // banner hari ini
+  var hi=hariIni(), cs=urut.filter(function(x){return normTgl(x.tanggalTransaksi)===hi;});
+  if(cs.length){
+    var so=setorPer[String(cs[0].idShift).trim()];
+    ban.className='hari-ini sudah';
+    ban.innerHTML='<span>✅</span><div>Hari ini SUDAH close shift<small>Oleh '+esc(cs[0].namaSales)+' · '+rp(cs[0].omsetHarian)+' · '+(so?'sudah disetor':'belum disetor')+'</small></div>';
+  } else {
+    ban.className='hari-ini belum';
+    ban.innerHTML='<span>⏳</span><div>Hari ini BELUM close shift<small>Isi form di bawah untuk close shift tanggal '+esc(hi)+'</small></div>';
+  }
+
+  // ---- isi dropdown filter bulan, hanya bulan yg ada datanya ----
+  var jumlahPerBulan={};
+  urut.forEach(function(x){
+    var ym=normTgl(x.tanggalTransaksi).slice(0,7);
+    if(ym) jumlahPerBulan[ym]=(jumlahPerBulan[ym]||0)+1;
+  });
+  var daftarBulan=Object.keys(jumlahPerBulan).sort().reverse(); // terbaru dulu
+  var pilihanSebelumnya=selBulan.value||'SEMUA';
+  selBulan.innerHTML='<option value="SEMUA">Semua Bulan</option>'+
+    daftarBulan.map(function(ym){ return '<option value="'+ym+'">'+labelBulan(ym)+' ('+jumlahPerBulan[ym]+')</option>'; }).join('');
+  selBulan.value=(pilihanSebelumnya!=='SEMUA' && daftarBulan.indexOf(pilihanSebelumnya)>=0) ? pilihanSebelumnya : 'SEMUA';
+  var bulanTerpilih=selBulan.value;
+
+  // ---- terapkan filter ----
+  var tampil=bulanTerpilih==='SEMUA' ? urut : urut.filter(function(x){ return normTgl(x.tanggalTransaksi).slice(0,7)===bulanTerpilih; });
+
+  document.getElementById('ringkasRiwayat').textContent = tampil.length
+    ? (bulanTerpilih==='SEMUA' ? 'Menampilkan '+Math.min(tampil.length,30)+' dari '+tampil.length+' close shift' : 'Menampilkan '+tampil.length+' close shift di '+labelBulan(bulanTerpilih))
+    : '';
+
+  // total ringkasan sesuai filter
+  var totalBox=document.getElementById('totalRiwayat');
+  if(tampil.length){
+    var totOmset=tampil.reduce(function(a,x){return a+Number(x.omsetHarian||0);},0);
+    var totNonTunai=tampil.reduce(function(a,x){return a+Number(x.nonTunai||0);},0);
+    var totSudahDisetor=tampil.reduce(function(a,x){
+      var so=setorPer[String(x.idShift).trim()];
+      return a+(so?Number(so.nominalTransfer||0):0);
+    },0);
+    var selisihBelumSetor=totOmset-totSudahDisetor;
+    totalBox.className='total-strip t3';
+    totalBox.style.display='grid';
+    totalBox.innerHTML='<div class="total-item"><div class="lbl">Total Close Shift</div><div class="val">'+rp(totOmset)+'</div></div>'+
+      '<div class="total-item"><div class="lbl">Total Non Tunai</div><div class="val">'+rp(totNonTunai)+'</div></div>'+
+      '<div class="total-item '+(selisihBelumSetor>0?'minus':'plus')+'"><div class="lbl">Selisih (Belum Disetor)</div><div class="val">'+rp(selisihBelumSetor)+'</div></div>';
+  } else { totalBox.style.display='none'; totalBox.innerHTML=''; }
+
+  // daftar riwayat
+  if(!tampil.length){ box.innerHTML='<div class="rw-kosong">'+(bulanTerpilih==='SEMUA'?'Belum ada close shift tercatat.':'Tidak ada close shift pada '+labelBulan(bulanTerpilih)+'.')+'</div>'; return; }
+  var batas=bulanTerpilih==='SEMUA'?30:tampil.length;
+  box.innerHTML=tampil.slice(0,batas).map(function(x){
+    var so=setorPer[String(x.idShift).trim()];
+    return '<div class="rw"><div class="rw-top"><div><div class="rw-tgl">'+esc(normTgl(x.tanggalTransaksi)||x.tanggalTransaksi)+'</div><div class="rw-id">'+esc(x.idShift)+'</div></div>'+
+      '<span class="badge '+(so?'ok':'wait')+'">'+(so?'Sudah disetor':'Belum disetor')+'</span></div>'+
+      '<div class="rw-baris"><span>Close shift oleh</span><b>'+esc(x.namaSales||'-')+'</b></div>'+
+      '<div class="rw-baris"><span>Omset harian</span><b>'+rp(x.omsetHarian)+(Number(x.nonTunai)>0?' <span style="font-weight:500;color:var(--ink-3)">(non tunai '+rp(x.nonTunai)+')</span>':'')+'</b></div>'+
+      (so?'<div class="rw-baris"><span>Disetor oleh</span><b>'+esc(so.namaPenyetor||'-')+' · '+rp(so.nominalTransfer)+'</b></div>':'')+
+      (x.catatan?'<div class="rw-baris"><span>Catatan</span><b style="font-weight:500">'+esc(x.catatan)+'</b></div>':'')+
+      (x.buktiUrl?'<div class="rw-baris"><span></span><a href="'+esc(x.buktiUrl)+'" target="_blank" rel="noopener" style="color:var(--blue);font-weight:700;font-size:13px">Lihat bukti</a></div>':'')+
+      '</div>';
+  }).join('');
+}
+
+function renderRiwayatSO(gagal){
+  var box=document.getElementById('riwayatSO');
+  var selBulan=document.getElementById('filterBulanRiwayatSO');
+  if(gagal){
+    box.innerHTML='<div class="rw-kosong">Riwayat belum bisa dimuat.</div>';
+    document.getElementById('ringkasRiwayatSO').textContent=''; return;
+  }
+  var urut=dataSO.slice().sort(function(a,b){
+    var ta=normTgl(a.tanggalTransaksi), tb=normTgl(b.tanggalTransaksi);
+    return ta<tb?1:ta>tb?-1:String(b.idSetor||b.idShift).localeCompare(String(a.idSetor||a.idShift));
+  });
+
+  // ---- isi dropdown filter bulan, hanya bulan yg ada datanya ----
+  var jumlahPerBulan={};
+  urut.forEach(function(x){
+    var ym=normTgl(x.tanggalTransaksi).slice(0,7);
+    if(ym) jumlahPerBulan[ym]=(jumlahPerBulan[ym]||0)+1;
+  });
+  var daftarBulan=Object.keys(jumlahPerBulan).sort().reverse();
+  var pilihanSebelumnya=selBulan.value||'SEMUA';
+  selBulan.innerHTML='<option value="SEMUA">Semua Bulan</option>'+
+    daftarBulan.map(function(ym){ return '<option value="'+ym+'">'+labelBulan(ym)+' ('+jumlahPerBulan[ym]+')</option>'; }).join('');
+  selBulan.value=(pilihanSebelumnya!=='SEMUA' && daftarBulan.indexOf(pilihanSebelumnya)>=0) ? pilihanSebelumnya : 'SEMUA';
+  var bulanTerpilih=selBulan.value;
+
+  var tampil=bulanTerpilih==='SEMUA' ? urut : urut.filter(function(x){ return normTgl(x.tanggalTransaksi).slice(0,7)===bulanTerpilih; });
+
+  document.getElementById('ringkasRiwayatSO').textContent = tampil.length
+    ? (bulanTerpilih==='SEMUA' ? 'Menampilkan '+Math.min(tampil.length,30)+' dari '+tampil.length+' setoran' : 'Menampilkan '+tampil.length+' setoran di '+labelBulan(bulanTerpilih))
+    : '';
+
+  // total ringkasan sesuai filter
+  var totalBoxSO=document.getElementById('totalRiwayatSO');
+  if(tampil.length){
+    var totOmsetCs=tampil.reduce(function(a,x){return a+Number(x.omsetCloseShift||0);},0);
+    var totNonTunaiSO=tampil.reduce(function(a,x){return a+Number(x.nonTunai||0);},0);
+    var totTransfer=tampil.reduce(function(a,x){return a+Number(x.nominalTransfer||0);},0);
+    var totSelisih=totTransfer-totOmsetCs;
+    totalBoxSO.style.display='grid';
+    totalBoxSO.innerHTML='<div class="total-item"><div class="lbl">Total Omset CS</div><div class="val">'+rp(totOmsetCs)+'</div></div>'+
+      '<div class="total-item"><div class="lbl">Total Non Tunai</div><div class="val">'+rp(totNonTunaiSO)+'</div></div>'+
+      '<div class="total-item"><div class="lbl">Total Transfer</div><div class="val">'+rp(totTransfer)+'</div></div>'+
+      '<div class="total-item '+(totSelisih<0?'minus':'plus')+'"><div class="lbl">Total Selisih</div><div class="val">'+(totSelisih<0?'-':'')+rp(Math.abs(totSelisih))+'</div></div>';
+  } else { totalBoxSO.style.display='none'; totalBoxSO.innerHTML=''; }
+
+  if(!tampil.length){ box.innerHTML='<div class="rw-kosong">'+(bulanTerpilih==='SEMUA'?'Belum ada setor omset tercatat.':'Tidak ada setoran pada '+labelBulan(bulanTerpilih)+'.')+'</div>'; return; }
+  var batas=bulanTerpilih==='SEMUA'?30:tampil.length;
+  box.innerHTML=tampil.slice(0,batas).map(function(x){
+    var selisih=Number(x.nominalTransfer||0)-Number(x.omsetCloseShift||0);
+    var catatan=x.catatanSetor||x.catatan||'';
+    return '<div class="rw"><div class="rw-top"><div><div class="rw-tgl">'+esc(normTgl(x.tanggalTransaksi)||x.tanggalTransaksi)+'</div><div class="rw-id">'+esc(x.idSetor||'')+' · Ref: '+esc(x.idShift)+'</div></div>'+
+      '<span class="badge '+(selisih<0?'wait':'ok')+'">'+(selisih<0?'Kurang '+rp(Math.abs(selisih)):(selisih>0?'Lebih '+rp(selisih):'Pas'))+'</span></div>'+
+      '<div class="rw-baris"><span>Disetor oleh</span><b>'+esc(x.namaPenyetor||'-')+'</b></div>'+
+      '<div class="rw-baris"><span>Omset close shift</span><b>'+rp(x.omsetCloseShift)+(Number(x.nonTunai)>0?' <span style="font-weight:500;color:var(--ink-3)">(non tunai '+rp(x.nonTunai)+')</span>':'')+'</b></div>'+
+      '<div class="rw-baris"><span>Nominal transfer</span><b>'+rp(x.nominalTransfer)+'</b></div>'+
+      (catatan?'<div class="rw-baris"><span>Catatan</span><b style="font-weight:500">'+esc(catatan)+'</b></div>':'')+
+      (x.buktiUrl?'<div class="rw-baris"><span></span><a href="'+esc(x.buktiUrl)+'" target="_blank" rel="noopener" style="color:var(--blue);font-weight:700;font-size:13px">Lihat bukti</a></div>':'')+
+      '</div>';
+  }).join('');
+}
+
+function shiftBelumDisetor(){
+  var sudah={};
+  dataSO.forEach(function(s){ sudah[String(s.idShift).trim()]=true; });
+  return dataCS.filter(function(c){ return !sudah[String(c.idShift).trim()]; });
+}
+var daftarShift=[];
+function isiDaftarShift(pilihId){
+  daftarShift=shiftBelumDisetor();
+  var sel=document.getElementById('selShiftSO');
+  sel.innerHTML='<option value="">'+(daftarShift.length?'-- Pilih Close Shift --':'-- Tidak ada close shift yang belum disetor --')+'</option>'+
+    daftarShift.map(function(s,i){
+      return '<option value="'+i+'">'+esc(normTgl(s.tanggalTransaksi)||s.tanggalTransaksi)+' | '+esc(s.idShift)+' | '+rp(s.omsetHarian)+'</option>';
+    }).join('');
+  var idx=-1;
+  if(pilihId) idx=daftarShift.findIndex(function(s){return String(s.idShift).trim()===String(pilihId).trim();});
+  else if(daftarShift.length===1) idx=0;
+  if(idx>=0){ sel.value=String(idx); }
+  isiDariCloseShift();
+}
+function isiDariCloseShift(){
+  var v=document.getElementById('selShiftSO').value;
+  var set=function(id,val){document.getElementById(id).value=val;};
+  if(v===''){ set('tglSO',''); set('omsetShiftSO',''); set('nonTunaiSO',0); set('nominalSO',''); hitungSelisih(); return; }
+  var s=daftarShift[parseInt(v)];
+  set('tglSO',normTgl(s.tanggalTransaksi));
+  set('omsetShiftSO',Number(s.omsetHarian||0));
+  set('nonTunaiSO',Number(s.nonTunai||0));
+  set('nominalSO',Number(s.omsetHarian||0));
+  hitungSelisih();
+}
+
+// ---------- kalkulasi ----------
+function hitungCS(){
+  var o=Number(document.getElementById('omsetCS').value||0), n=Number(document.getElementById('nonTunaiCS').value||0);
+  document.getElementById('bersihCS').value=rp(Math.max(0,o-n));
+}
+function hitungSelisih(){
+  var o=Number(document.getElementById('omsetShiftSO').value||0), t=Number(document.getElementById('nominalSO').value||0);
+  var sel=t-o, el=document.getElementById('selisihSO');
+  el.value=rp(sel); el.classList.remove('plus','minus'); el.classList.add(sel<0?'minus':'plus');
+}
+
+function kunci(btn,on,teks){ btn.disabled=on; btn.classList.toggle('sibuk',on); btn.textContent=on?'Mengirim...':teks; sedangKirim=on; }
+
+// ---------- SUBMIT CLOSE SHIFT ----------
+async function submitClose(){
+  if(sedangKirim) return;
+  var btn=document.getElementById('btnCS'), sel=document.getElementById('selNamaCS');
+  if(!sel.value) return alertBox('Pilih petugas dulu.','err');
+  var tgl=normTgl(document.getElementById('tglCS').value);
+  if(!tgl) return alertBox('Tanggal transaksi wajib diisi.','err');
+  var omsetAsli=Number(document.getElementById('omsetCS').value||0);
+  var nonTunai=Number(document.getElementById('nonTunaiCS').value||0);
+  if(!(omsetAsli>0)) return alertBox('Isi Omset Close Shift.','err');
+  if(nonTunai<0) return alertBox('Non tunai tidak boleh negatif.','err');
+  if(nonTunai>omsetAsli) return alertBox('Non tunai tidak boleh lebih besar dari omset close shift.','err');
+  if(!csFoto) return alertBox('Harap unggah foto bukti Close Shift.','err');
+
+  kunci(btn,true,'');
+  try{
+    // Segarkan data pusat dulu supaya input dari aplikasi pusat ikut terdeteksi
+    var ok=await muatDataPusat();
+    if(!ok){ alertBox('❌ Tidak bisa memeriksa data pusat (duplikat). Coba lagi.','err'); return; }
+    var dobel=dataCS.some(function(x){return normTgl(x.tanggalTransaksi)===tgl;});
+    if(dobel){ alertBox('❌ Close Shift "'+KDKMP+'" tanggal '+tgl+' sudah tercatat di sistem pusat (tidak boleh double input di tanggal yang sama).','err'); return; }
+
+    var p=PETUGAS[parseInt(sel.value)];
+    var d=await panggilAPI({
+      action:'submitCloseShift',
+      namaSales:p.nama, emailSales:p.email, noHpSales:p.noHp,
+      tanggalTransaksi:tgl,
+      kabupaten:KABUPATEN, kecamatan:KECAMATAN, namaKdkmp:KDKMP,
+      omsetHarian:Math.max(0,omsetAsli-nonTunai),
+      omsetCloseShiftAsli:omsetAsli,
+      nonTunai:nonTunai,
+      catatan:document.getElementById('catatanCS').value,
+      buktiBase64:csFoto
+    });
+    if(d.status==='success'||d.ok){
+      alertBox('✅ '+(d.message||'Close Shift tersimpan!'),'ok');
+      document.getElementById('omsetCS').value=''; document.getElementById('nonTunaiCS').value=0;
+      document.getElementById('catatanCS').value=''; hitungCS(); resetFoto('cs');
+      await muatDataPusat(d.idShift);
+      if(d.idShift) switchTab('setor');
+    } else alertBox('❌ Gagal: '+(d.message||d.error||'unknown'),'err');
+  }catch(e){ alertBox('❌ Error: '+e.message,'err'); }
+  kunci(btn,false,'✅ Simpan Close Shift');
+}
+
+// ---------- SUBMIT SETOR OMSET ----------
+async function submitSetor(){
+  if(sedangKirim) return;
+  var btn=document.getElementById('btnSO'), sel=document.getElementById('selNamaSO');
+  var v=document.getElementById('selShiftSO').value;
+  if(!sel.value) return alertBox('Pilih penyetor dulu.','err');
+  if(v==='') return alertBox('Pilih Close Shift dulu.','err');
+  var transfer=Number(document.getElementById('nominalSO').value||0);
+  if(!(transfer>0)) return alertBox('Isi nominal transfer.','err');
+  if(!soFoto) return alertBox('Harap unggah foto bukti transfer.','err');
+  var s=daftarShift[parseInt(v)];
+
+  kunci(btn,true,'');
+  try{
+    // Cek ulang: mungkin shift ini sudah disetor lewat aplikasi pusat
+    var ok=await muatDataPusat(s.idShift);
+    if(!ok){ alertBox('❌ Tidak bisa memeriksa data pusat. Coba lagi.','err'); return; }
+    var masihAda=shiftBelumDisetor().some(function(x){return String(x.idShift).trim()===String(s.idShift).trim();});
+    if(!masihAda){ alertBox('❌ Close Shift '+s.idShift+' sudah disetor di sistem pusat.','err'); return; }
+
+    var p=PETUGAS[parseInt(sel.value)];
+    var d=await panggilAPI({
+      action:'submitSetorOmset',
+      idShift:s.idShift,
+      namaPenyetor:p.nama, emailPenyetor:p.email, noHpPenyetor:p.noHp,
+      tanggalTransaksi:document.getElementById('tglSO').value,
+      kabupaten:KABUPATEN, kecamatan:KECAMATAN, namaKdkmp:KDKMP,
+      omsetCloseShift:Number(document.getElementById('omsetShiftSO').value||0),
+      nonTunai:Number(document.getElementById('nonTunaiSO').value||0),
+      nominalTransfer:transfer,
+      catatanSetor:document.getElementById('catatanSO').value,
+      buktiBase64:soFoto
+    });
+    if(d.status==='success'||d.ok){
+      alertBox('✅ '+(d.message||'Setor Omset tersimpan!'),'ok');
+      document.getElementById('catatanSO').value=''; resetFoto('so');
+      await muatDataPusat();
+    } else alertBox('❌ Gagal: '+(d.message||d.error||'unknown'),'err');
+  }catch(e){ alertBox('❌ Error: '+e.message,'err'); }
+  kunci(btn,false,'✅ Simpan Setor Omset');
+}
+</script>
+</body>
+</html>
